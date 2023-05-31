@@ -1,46 +1,47 @@
-#include<iostream>
-#include<queue>
-#include<map>
+#include<bits/stdc++.h>
 using namespace std;
-void printbfs(int** arr, int v, int current_element, int v2, bool*visited)
+
+vector<int> getPathBFS(int** arr, int n, int sv, int ev, bool*visited)
 {
 	queue<int>q;
-	visited[current_element] = true;
-	q.push(current_element);
-	map<int, int>m;
+	visited[sv] = true;
+	q.push(sv);
+	//map of child to its parent
+	unordered_map<int, int>m;
+	
 	while (!q.empty())
 	{
 		int current = q.front();
-		if (current == v2)
-		{
+		q.pop();
+		if(current == ev){
 			break;
 		}
-		for (int i = 0; i < v; i++)
-		{
-			if (!visited[i] && arr[current][i] == 1 && i !=current)
-			{
+		for(int i = 0; i < n; i++){
+			if(current == i){
+				continue;
+			}
+			if(arr[current][i] == 1 && !visited[i]){
 				q.push(i);
-				visited[i] = true;
 				m[i] = current;
+				visited[i] = true;
 			}
 		}
-		q.pop();
-		if (q.empty())
-		{
-			return;
-		}
 	}
-	int i = v2;
-	cout << v2<<" ";
-	while (i!=current_element)
-	{
-		cout << m[i]<<" ";
+	//To store the path
+	vector<int>res;
+	res.push_back(ev);
+	int i = ev;
+	while(i != sv){
 		i = m[i];
+		res.push_back(i);
 	}
+	reverse(res.begin(), res.end());
+	return res;
 }
 int main()
 {
 	int v, e;
+	cout<<"Enter number of vertices and edges: ";
 	cin >> v >> e;
 	int** arr = new int* [v];
 	for (int i = 0; i < v; i++)
@@ -51,6 +52,7 @@ int main()
 			arr[i][j] = 0;
 		}
 	}
+	cout<<"Enter the edges: ";
 	while (e--)
 	{
 		int a, b;
@@ -58,6 +60,7 @@ int main()
 		arr[a][b] = 1;
 		arr[b][a] = 1;
 	}
+	cout<<"Enter starting and end vertex: ";
 	int v1, v2;
 	cin >> v1 >> v2;
 	bool* visited = new bool[v];
@@ -65,6 +68,13 @@ int main()
 	{
 		visited[i] = false;
 	}
-	printbfs(arr, v, v1, v2, visited);
+	vector<int>res = getPathBFS(arr, v, v1, v2, visited);
+	for(int i = 0; i < res.size(); i++){
+		cout<<res[i]<<" ";
+	}
+	for(int i = 0; i < v; i++){
+	    delete[] arr[i];
+	}
+	delete[] arr;
+	delete[] visited;
 }
-
